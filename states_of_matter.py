@@ -121,15 +121,17 @@ def main():
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((250, 250, 250))
-
+    
+    #elements_background = load_image("4-elements-background.jpg")
+    #background.blit(elements_background[0],(-450, -200))
+    
     if pygame.font:
         font = pygame.font.Font(None, 36)
         text = font.render("States of Matter", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(text, textpos)
 
-    #background = load_image("4-elements-background.jpg")
-    #screen.blit(background[0], (-450, -200))
+
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
@@ -150,10 +152,9 @@ def main():
             elif event.type == MOUSEBUTTONDOWN:
                 if mouse.click(start_button):
                     start_button.set_clicked()
-                else:
-                    start_button.set_unclicked()
             elif event.type == MOUSEBUTTONUP:
                 mouse.unclick()
+                start_button.set_unclicked()
 
         all_sprites.update()
 
