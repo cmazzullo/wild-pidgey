@@ -1,0 +1,51 @@
+****turn based rpg*****
+
+element:
+	Fire
+	Water
+	Air
+	Earth
+	Dark
+	Light
+
+states:
+	Solid
+	Liquid
+	Gas
+	Plasma
+
+weakness/strength:
+	---> beats
+	~~~> doesnt affect
+	///> resisted by
+
+	Water ---> Fire ---> Air ---> Earth ---> Water
+	Light <---> Dark
+	Fire ---> Dark
+	Fire ~~~> Light
+	Dark ///> Fire
+	Fire ///> Water
+	Air ///> Earth
+	Earth ///> Water
+
+	Plasma <---> Liquid
+	Plasma ///> Gas
+	Liquid ///> Solid
+
+stats:
+
+	Vitality:  health
+	Physical Strength:  physical attack
+	Spiritual Strength:  spirit attack
+	Intellecual Strength:  intellect attack
+	Agility:  speed
+	Physical Endurance:  physical defense
+	Spiritual Endurance:  spirit defense
+	Intellectual Endurance:  intellect defense
+
+	Physical Strength ===> Spiritual Endurance
+	Spritual Strength ===> Intellectual Endurance
+	Intellectual Strength ===> Physical Endurance
+
+	damage =  health - ((strength-endurance)*element*state*) 
+	.05% chance of critical hit which will double damage
