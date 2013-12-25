@@ -88,6 +88,7 @@ class Button(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self) #call Sprite intializer
         self.original_image_source = original_image_source
         self.clicked_image_source = clicked_image_source
+        self.location_coordinates = location_coordinates
         self.clicked = 0
         self.image, self.rect = load_image(original_image_source, -1)
         #screen = pygame.display.get_surface()
@@ -98,13 +99,15 @@ class Button(pygame.sprite.Sprite):
         "update on click or unclick"
         if self.clicked:
             self.image, self.rect = load_image(self.clicked_image_source, -1)
-        #else:
-        #    self.image, self.rect = load_image(self.original_image_source, -1)
+            self.rect.midtop = self.location_coordinates
+        else:
+            self.image, self.rect = load_image(self.original_image_source, -1)
+            self.rect.midtop = self.location_coordinates
 
-    def clicked(self):
+    def set_clicked(self):
         self.clicked = 1
 
-    def unclicked(self):
+    def set_unclicked(self):
         self.clicked = 0
 
 def main():
@@ -146,10 +149,9 @@ def main():
                 return
             elif event.type == MOUSEBUTTONDOWN:
                 if mouse.click(start_button):
-                    #punch_sound.play() #punch
-                    start_button.clicked()
-                #else:
-                #    whiff_sound.play() #miss
+                    start_button.set_clicked()
+                else:
+                    start_button.set_unclicked()
             elif event.type == MOUSEBUTTONUP:
                 mouse.unclick()
 
