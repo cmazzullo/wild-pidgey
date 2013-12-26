@@ -10,6 +10,12 @@ Useful sources:
 
 http://www.pygame.org/docs/tut/chimp/ChimpLineByLine.html
 
+http://inventwithpython.com/blog/2012/10/30/creating-a-button-ui-module-for-pygame/
+
+http://floppsie.comp.glam.ac.uk/Glamorgan/gaius/games/8.html
+
+http://www.pygame.org/docs/ref/sprite.html#pygame.sprite.Group
+
 
 Image sources:
 
@@ -137,6 +143,7 @@ def main():
 
     mouse = Mouse()
     start_button = Button("start_button_original.jpg", "start_button_clicked.jpg", (background.get_width()/2,background.get_height()/3))
+    #clicked_start_button = Button("start_button_clicked.jpg", "start_button_clicked.jpg", (background.get_width()/2,background.get_height()/3))
     all_sprites = pygame.sprite.RenderPlain((mouse, start_button))
     clock = pygame.time.Clock()
 
@@ -151,6 +158,8 @@ def main():
                 return
             elif event.type == MOUSEBUTTONDOWN:
                 if mouse.click(start_button):
+                    #all_sprites.remove(start_button)
+                    #all_sprites = pygame.sprite.RenderPlain((mouse, clicked_start_button))
                     start_button.set_clicked()
             elif event.type == MOUSEBUTTONUP:
                 mouse.unclick()
