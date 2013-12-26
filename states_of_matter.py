@@ -102,9 +102,7 @@ class Mouse(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) #call Sprite initializer
         self.clicking = 0
-        #self.image, self.rect = load_image('game_mouse.jpg', -1)
         self.image, self.rect = load_image('cursor.png',-1)
-        #self.whiff_sound = load_sound('high_tone_sword.wav')
         
     def update(self):
         "move the hand based on the computer mouse position"
@@ -134,18 +132,16 @@ class Button(pygame.sprite.Sprite):
         self.clicked_image_source = clicked_image_source
         self.location_coordinates = location_coordinates
         self.clicked = 0
-        self.image, self.rect = load_image(original_image_source, -1)
-        #screen = pygame.display.get_surface()
-        #self.area = screen.get_rect()
+        self.image, self.rect = load_image(original_image_source, None)
         self.rect.midtop = location_coordinates
 
     def update(self):
         "update on click or unclick"
         if self.clicked:
-            self.image, self.rect = load_image(self.clicked_image_source, -1)
+            self.image, self.rect = load_image(self.clicked_image_source, None)
             self.rect.midtop = self.location_coordinates
         else:
-            self.image, self.rect = load_image(self.original_image_source, -1)
+            self.image, self.rect = load_image(self.original_image_source, None)
             self.rect.midtop = self.location_coordinates
 
     def set_clicked(self):
@@ -185,12 +181,12 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-    
-    start_button = Button("start_button_original.jpg", "start_button_clicked.jpg", (background.get_width()/2, 12.5*background.get_height()/17))
     flamethrower = Animation('animation/Flames/flamethrower_/flamethrower_', 29, (-50,0))
     bolt_tsela = Animation('animation/voltage_0/bolt_tesla/bolt_tesla_', 10, (600, 200))
     mouse = Mouse()
-    all_sprites = pygame.sprite.RenderPlain((start_button, flamethrower, bolt_tsela, mouse))
+    start_button = Button("start_button_original.jpg", "start_button_clicked.jpg", (background.get_width()/2, 12.5*background.get_height()/17))
+    #all_sprites = pygame.sprite.RenderPlain((flamethrower, bolt_tsela, mouse, start_button))   #arbitary order
+    all_sprites = pygame.sprite.OrderedUpdates((flamethrower, bolt_tsela, start_button, mouse)) #order based on how they are added!
     clock = pygame.time.Clock()
 
     #game driver
