@@ -1,0 +1,35 @@
+Useful sources:
+
+http://www.pygame.org/docs/tut/chimp/ChimpLineByLine.html
+
+http://inventwithpython.com/blog/2012/10/30/creating-a-button-ui-module-for-pygame/
+
+http://floppsie.comp.glam.ac.uk/Glamorgan/gaius/games/8.html
+
+http://www.pygame.org/docs/ref/sprite.html#pygame.sprite.Group
+
+
+Image sources:
+
+http://www.we-impact.com/wp-content/uploads/2012/03/Four-Elements1.jpg
+
+http://opengameart.org/content/knights-glove-mouse-cursor-0
+
+
+PNG conversion resource:
+
+http://image.online-convert.com/convert-to-png
+
+
+WAV conversion resource:
+
+http://media.io/
+
+Music:
+
+Newgrounds
+
+
+Sounds:
+
+http://www.freesound.org/
