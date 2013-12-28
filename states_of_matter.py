@@ -12,74 +12,21 @@ Last Edited:  12/25/2013
 import pygame,os,sys,math
 from pygame.locals import *
 import random
+import util
 
 
 if not pygame.font: print 'Warning, fonts disabled'
 if not pygame.mixer: print 'Warning, sound disabled'
 
 
-#seperate this into a utility class
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error, message:
-        print 'Cannot load image:', name
-        raise SystemExit, message
-
-    #image = pygame.Surface((image.get_rect().width,image.get_rect().height) , pygame.SRCALPHA, 32)
-    #image = image.set_colorkey(TRANSPARENT)
-    if image.get_alpha():
-        image = image.convert_alpha()
-    else:
-        image = image.convert()
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0,0))
-        image.set_colorkey(colorkey, RLEACCEL)
-    return image, image.get_rect()
-
-
-#seperate this into a utility class
-def load_sound(name):
-    class NoneSound:
-        def play(self): pass
-    if not pygame.mixer:
-        return NoneSound()
-    fullname = os.path.join('data', name)
-    try:
-        sound = pygame.mixer.Sound(fullname)
-    except pygame.error, message:
-        print 'Cannot load sound:', wav
-        raise SystemExit, message
-    return sound
-
-
-#seperate into an animation utility class
-def get_frames(path,number_of_frames):
-    """
-    creates animation frames
-    """
-
-    if not pygame.display.get_init ():
-        raise Exception ("pygame.display.get_init() returned False.")
-
-    pygame.mixer.init(frequency=44100, size=16, channels=2)
-
-    frames = []
-    for i in range(1, number_of_frames + 1):
-        frames.append(load_image(path+str(i)+".png"))
-        #print("appending frame number " + str(i))
-    return frames
-
-
+#seperate this into an object class
 class Animation(pygame.sprite.Sprite):
     def __init__(self,path, number_of_frames, coordinates):
         pygame.sprite.Sprite.__init__(self) #call Sprite initializer
         self.path = path
         self.number_of_frames = number_of_frames
         self.coordinates = coordinates
-        self.frames = get_frames(self.path, self.number_of_frames)
+        self.frames = util.get_frames(self.path, self.number_of_frames)
         self.current_frame = 0
         self.image, self.rect = self.frames[self.current_frame][0], self.frames[self.current_frame][1]
         #self.rect.midtop = self.coordinates
@@ -102,7 +49,7 @@ class Mouse(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) #call Sprite initializer
         self.clicking = 0
-        self.image, self.rect = load_image('cursor.png',-1)
+        self.image, self.rect = util.load_image('cursor.png',-1)
         
     def update(self):
         "move the hand based on the computer mouse position"
@@ -132,16 +79,16 @@ class Button(pygame.sprite.Sprite):
         self.clicked_image_source = clicked_image_source
         self.location_coordinates = location_coordinates
         self.clicked = 0
-        self.image, self.rect = load_image(original_image_source, None)
+        self.image, self.rect = util.load_image(original_image_source, None)
         self.rect.midtop = location_coordinates
 
     def update(self):
         "update on click or unclick"
         if self.clicked:
-            self.image, self.rect = load_image(self.clicked_image_source, None)
+            self.image, self.rect = util.load_image(self.clicked_image_source, None)
             self.rect.midtop = self.location_coordinates
         else:
-            self.image, self.rect = load_image(self.original_image_source, None)
+            self.image, self.rect = util.load_image(self.original_image_source, None)
             self.rect.midtop = self.location_coordinates
 
     def set_clicked(self):
@@ -149,6 +96,31 @@ class Button(pygame.sprite.Sprite):
 
     def set_unclicked(self):
         self.clicked = 0
+
+
+class MenuControl(object):
+    def __init__(self):
+        self.bools = {}
+        self.bools["in_start_screen"] = False
+        self.bools["in_main_menu"] = False
+        self.bools["in_game"] = False
+
+    def set_in_start_screen(self, boolean):
+        self.make_all_false()
+        self.bools["in_start_screen"] = boolean
+        
+    def set_in_main_menu(self, boolean):
+        self.make_all_false()
+        self.bools["in_main_menu"] = boolean
+        
+    def set_in_game(self, boolean):
+        self.make_all_false()
+        self.bools["in_game"] = boolean
+
+    def make_all_false(self):
+        for b in self.bools:
+            b = False
+
 
 def main():
 
@@ -166,7 +138,7 @@ def main():
     background = background.convert()
     background.fill((250, 250, 250))
     
-    elements_background = load_image("4-elements-background.jpg")
+    elements_background = util.load_image("4-elements-background.jpg")
     
     
     if pygame.font:
@@ -189,6 +161,14 @@ def main():
     all_sprites = pygame.sprite.OrderedUpdates((flamethrower, bolt_tsela, start_button, mouse)) #order based on how they are added!
     clock = pygame.time.Clock()
 
+    battle_button = Button("battle_menu_button_original.jpg", "battle_menu_button_clicked.jpg", (background.get_width()/2,4.5*background.get_height()/17))
+    options_button = Button("options_menu_button_original.jpg", "options_menu_button_clicked.jpg", (background.get_width()/2, 10.5*background.get_height()/17))
+
+    buttons = [start_button]
+
+    menu_control = MenuControl()
+    menu_control.set_in_start_screen(True)
+    
     #game driver
     while 1:
         clock.tick(60)
@@ -199,13 +179,27 @@ def main():
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
             elif event.type == MOUSEBUTTONDOWN:
-                if mouse.click(start_button):
-                    #all_sprites.remove(start_button)
-                    #all_sprites = pygame.sprite.RenderPlain((mouse, clicked_start_button))
-                    start_button.set_clicked()
+                for but in buttons:
+                    if mouse.click(but):
+                        but.set_clicked()
             elif event.type == MOUSEBUTTONUP:
-                mouse.unclick()
-                start_button.set_unclicked()
+                if menu_control.bools["in_start_screen"] and start_button.clicked:
+                    #enter main manu
+                    menu_control.set_in_main_menu(True)
+                    mouse.unclick()
+                    start_button.set_unclicked()
+                    all_sprites.empty()
+                    buttons = [battle_button, options_button]
+                    all_sprites = pygame.sprite.OrderedUpdates((battle_button, options_button, mouse))
+                elif menu_control.bools["in_start_screen"]:
+                    mouse.unclick()
+                    start_button.set_unclicked()
+                if menu_control.bools["in_main_menu"] and battle_button.clicked:
+                    mouse.unclick()
+                    battle_button.set_unclicked()
+                if menu_control.bools["in_main_menu"] and options_button.clicked:
+                    mouse.unclick()
+                    options_button.set_unclicked()
 
         all_sprites.update()
 
