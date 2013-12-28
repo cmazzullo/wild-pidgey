@@ -2,4 +2,4 @@ FIXED bug1:  when you click start, the start button renders terribly
 
 FIXED bug2:  sometimes the mouse is set behind the button or animations
 
-bug3:  doesnt look through all frames...it fails to load last frame and also only loops through all but last 2 frames.  this is odd.
+FIXED bug3:  doesnt look through all frames...it fails to load last frame and also only loops through all but last 2 frames.  this is odd.

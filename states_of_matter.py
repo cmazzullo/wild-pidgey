@@ -67,7 +67,7 @@ def get_frames(path,number_of_frames):
     pygame.mixer.init(frequency=44100, size=16, channels=2)
 
     frames = []
-    for i in range(1,number_of_frames):
+    for i in range(1, number_of_frames + 1):
         frames.append(load_image(path+str(i)+".png"))
         #print("appending frame number " + str(i))
     return frames
@@ -160,7 +160,7 @@ def main():
 
     #music!!!
     pygame.mixer.music.load("music/Glorious Morning 2.mp3")
-    pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1, 53.0)
 
     background = pygame.Surface(screen.get_size(), pygame.SRCALPHA, 32)
     background = background.convert()
