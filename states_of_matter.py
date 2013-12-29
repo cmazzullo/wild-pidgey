@@ -21,11 +21,12 @@ if not pygame.mixer: print 'Warning, sound disabled'
 
 #seperate this into an object class
 class Animation(pygame.sprite.Sprite):
-    def __init__(self,path, number_of_frames, coordinates):
+    def __init__(self,path, number_of_frames, coordinates, infinite_loop):
         pygame.sprite.Sprite.__init__(self) #call Sprite initializer
         self.path = path
         self.number_of_frames = number_of_frames
         self.coordinates = coordinates
+        self.infinite_loop = infinite_loop
         self.frames = util.get_frames(self.path, self.number_of_frames)
         self.current_frame = 0
         self.image, self.rect = self.frames[self.current_frame][0], self.frames[self.current_frame][1]
@@ -34,10 +35,9 @@ class Animation(pygame.sprite.Sprite):
         
     def update(self):
         #print("current frame is:  " + str(self.current_frame))
-        if self.current_frame + 1 == len(self.frames):
+        if self.infinite_loop and self.current_frame + 1 == len(self.frames):
             self.current_frame = 0
-        else:
-            self.current_frame = self.current_frame + 1
+        self.current_frame = self.current_frame + 1
         self.image, self.rect = self.frames[self.current_frame][0], self.frames[self.current_frame][1]
         #self.rect.midtop = self.coordinates
         self.rect = self.rect.move(self.coordinates)
@@ -58,14 +58,16 @@ class Mouse(pygame.sprite.Sprite):
         if self.clicking:
             pygame.mixer.Sound("data/high_tone_sword.wav").play()
             self.rect.move_ip(5, 10)
+            #self.flash = Animation('animation/Flashes/flash_c/flash_c_', 6, pos, False)
+
 
     def click(self, target):
         "returns true if the hand collides with the target"
-        if not self.clicking:
-            self.clicking = 1
-            hitbox = self.rect.inflate(-5, -5)
-            return hitbox.colliderect(target.rect)
-
+        self.clicking = 1
+        hitbox = self.rect.inflate(-5, -5)
+        if hitbox.colliderect(target.rect):
+            return True
+    
     def unclick(self):
         self.clicking = 0
 
@@ -153,18 +155,21 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-    flamethrower = Animation('animation/Flames/flamethrower_/flamethrower_', 29, (-50,0))
-    bolt_tsela = Animation('animation/voltage_0/bolt_tesla/bolt_tesla_', 10, (600, 200))
+    #for start screen
+    flamethrower = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (-50,0), True)
+    bolt_tsela = Animation('animation/voltage_0/bolt_tesla/bolt_tesla_', 10, (600, 200), True)
     mouse = Mouse()
     start_button = Button("start_button_original.jpg", "start_button_clicked.jpg", (background.get_width()/2, 12.5*background.get_height()/17))
     #all_sprites = pygame.sprite.RenderPlain((flamethrower, bolt_tsela, mouse, start_button))   #arbitary order
     all_sprites = pygame.sprite.OrderedUpdates((flamethrower, bolt_tsela, start_button, mouse)) #order based on how they are added!
     clock = pygame.time.Clock()
 
+    #for main menu
     battle_button = Button("battle_menu_button_original.jpg", "battle_menu_button_clicked.jpg", (background.get_width()/2,4.5*background.get_height()/17))
     options_button = Button("options_menu_button_original.jpg", "options_menu_button_clicked.jpg", (background.get_width()/2, 10.5*background.get_height()/17))
-
-    buttons = [start_button]
+    #smoke = Animation('animation/smokes/smoke puff right/smoke_right_', 10, (-50,100))
+    #flash = Animation('animation/Flashes/flash_c/flash_c_', 6, (600, 200))
+    #cut = Animation('animation/cuts/cut_c/cut_c_', 5, (600, -25))
 
     menu_control = MenuControl()
     menu_control.set_in_start_screen(True)
@@ -179,26 +184,22 @@ def main():
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
             elif event.type == MOUSEBUTTONDOWN:
-                for but in buttons:
-                    if mouse.click(but):
+                for but in all_sprites:
+                    if isinstance(but, (Button)) and mouse.click(but):
                         but.set_clicked()
             elif event.type == MOUSEBUTTONUP:
+                mouse.unclick()
                 if menu_control.bools["in_start_screen"] and start_button.clicked:
                     #enter main manu
                     menu_control.set_in_main_menu(True)
-                    mouse.unclick()
                     start_button.set_unclicked()
                     all_sprites.empty()
-                    buttons = [battle_button, options_button]
-                    all_sprites = pygame.sprite.OrderedUpdates((battle_button, options_button, mouse))
+                    all_sprites.add(battle_button, options_button, mouse)
                 elif menu_control.bools["in_start_screen"]:
-                    mouse.unclick()
                     start_button.set_unclicked()
                 if menu_control.bools["in_main_menu"] and battle_button.clicked:
-                    mouse.unclick()
                     battle_button.set_unclicked()
                 if menu_control.bools["in_main_menu"] and options_button.clicked:
-                    mouse.unclick()
                     options_button.set_unclicked()
 
         all_sprites.update()

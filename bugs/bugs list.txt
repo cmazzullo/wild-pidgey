@@ -4,4 +4,4 @@ FIXED bug2:  sometimes the mouse is set behind the button or animations
 
 FIXED bug3:  doesnt look through all frames...it fails to load last frame and also only loops through all but last 2 frames.  this is odd.
 
-bug4:  cant hit 1 of 2 buttons (baesd on the order i add them to the buttons list) on the menu screen.
+FIXED bug4:  cant hit 1 of 2 buttons (baesd on the order i add them to the buttons list) on the menu screen.
