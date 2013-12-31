@@ -32,15 +32,23 @@ class Animation(pygame.sprite.Sprite):
         self.image, self.rect = self.frames[self.current_frame][0], self.frames[self.current_frame][1]
         #self.rect.midtop = self.coordinates
         self.rect = self.rect.move(self.coordinates)
+        self.complete = False
         
     def update(self):
         #print("current frame is:  " + str(self.current_frame))
         if self.infinite_loop and self.current_frame + 1 == len(self.frames):
             self.current_frame = 0
+        elif (not self.infinite_loop) and self.current_frame + 1 == len(self.frames):
+            self.complete = True
+            return
         self.current_frame = self.current_frame + 1
         self.image, self.rect = self.frames[self.current_frame][0], self.frames[self.current_frame][1]
         #self.rect.midtop = self.coordinates
         self.rect = self.rect.move(self.coordinates)
+
+    def restart(self):
+        self.current_frame = 0
+        self.complete = False
 
 
 #seperate this into an object class
@@ -170,6 +178,8 @@ def main():
     #smoke = Animation('animation/smokes/smoke puff right/smoke_right_', 10, (-50,100))
     #flash = Animation('animation/Flashes/flash_c/flash_c_', 6, (600, 200))
     #cut = Animation('animation/cuts/cut_c/cut_c_', 5, (600, -25))
+    gates_closed = Animation('animation/gates/gates_closed/gates_closed_', 13, (0, 0), False)
+    gates_opened = Animation('animation/gates/gates_opened/gates_closed_', 13, (0, 0), False)
 
     menu_control = MenuControl()
     menu_control.set_in_start_screen(True)
@@ -195,12 +205,23 @@ def main():
                     start_button.set_unclicked()
                     all_sprites.empty()
                     all_sprites.add(battle_button, options_button, mouse)
+                    all_sprites.add(gates_closed)
                 elif menu_control.bools["in_start_screen"]:
                     start_button.set_unclicked()
                 if menu_control.bools["in_main_menu"] and battle_button.clicked:
+                    all_sprites.add(gates_closed)
                     battle_button.set_unclicked()
                 if menu_control.bools["in_main_menu"] and options_button.clicked:
+                    all_sprites.add(gates_closed)
                     options_button.set_unclicked()
+
+        if gates_closed.complete:
+            all_sprites.remove(gates_closed)
+            gates_closed.restart()
+            all_sprites.add(gates_opened)
+        if gates_opened.complete:
+            all_sprites.remove(gates_opened)
+            gates_opened.restart()
 
         all_sprites.update()
 
