@@ -17,5 +17,5 @@ class Monster:
 		self.int_endur = 	int_end
 
 	# returns total outgoing damage for a given attack
-	def attack(self, base_dmg)
+	def attack(self, base_dmg):
 		return (phys_strength - phys_endur)
