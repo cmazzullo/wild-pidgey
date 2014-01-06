@@ -168,8 +168,7 @@ def main():
     bolt_tsela = Animation('animation/voltage_0/bolt_tesla/bolt_tesla_', 10, (600, 200), True)
     mouse = Mouse()
     start_button = Button("start_button_original.jpg", "start_button_clicked.jpg", (background.get_width()/2, 12.5*background.get_height()/17))
-    #all_sprites = pygame.sprite.RenderPlain((flamethrower, bolt_tsela, mouse, start_button))   #arbitary order
-    all_sprites = pygame.sprite.OrderedUpdates((flamethrower, bolt_tsela, start_button, mouse)) #order based on how they are added!
+    all_sprites = pygame.sprite.OrderedUpdates((start_button, mouse)) #order based on how they are added!
     clock = pygame.time.Clock()
 
     #for main menu
