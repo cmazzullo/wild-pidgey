@@ -1,5 +1,5 @@
 from random import randint
-from Attack import Attack
+from attack import Attack
 
 class Monster:
     """A framework for the monsters in States of Matter"""

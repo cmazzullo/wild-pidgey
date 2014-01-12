@@ -1,4 +1,4 @@
-from Attack import Attack
+from attack import Attack
 from monster import Monster
 
 
