@@ -1,4 +1,4 @@
-from attack import Attack
+from attack import attack
 from monster import Monster
 
 class Player():

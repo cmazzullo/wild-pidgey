@@ -27,7 +27,7 @@ class Monster:
         self.hp = vitality
         self.current_state = elements[0]
 
-    # returns total incoming damage for a given attack - not implemented
+    # returns total incoming damage for a given attack
     #	Physical Strength ===> Spiritual Endurance
     #	Spritual Strength ===> Intellectual Endurance
     #	Intellectual Strength ===> Physical Endurance
@@ -53,6 +53,8 @@ class Monster:
     #	Liquid ///> Solid
     #
     def recieve_attack(self, attack, enemy_monster):
+        if attack == None:
+            return
         if attack.attack_attribute == "physical":
             attribute_damage = ((enemy_monster.phys_strength - 
                                  self.spirit_endur)/enemy_monster.phys_strength)
@@ -67,7 +69,7 @@ class Monster:
         if attribute_damage < 0.0:
             attribute_damage = 0.0
         else:
-            attribute_damage = attack.base_damage*attribute_damage
+            attribute_damage = attack.base_damage * attribute_damage
         
         type_damage_0 = 1.0
         if (attack.attack_type == "fire" and self.types[0] == "light"):
@@ -85,8 +87,6 @@ class Monster:
               or (attack.attack_type == "dark" and self.types[0] == "light") \
               or (attack.attack_type == "fire" and self.types[0] == "dark"):
             type_damage_0 = 2.0
-
-
 
         type_damage_1 = 1.0
         #check to see if Monster has a second type
@@ -127,10 +127,10 @@ class Monster:
 
 
     def str(self):
-        print 'Name:', self.name, 'Types:', self.types, 'Vitality:', \
-              self.vitality,'Speed:', self.speed, 'Physical strength:', \
-              self.phys_strength,'Spirit Strength:', self.spirit_strength, \
-              'Intellectual Strength:',self.int_strength, \
-              'Pysical endurance:', self.phys_endur, 'Spiritual Endurance:', \
-              self.spirit_endur, 'Intellectual Endurance:',self.int_endur
+        return 'Name:'+ self.name + 'Types:' + self.types + 'Vitality:' + \
+              self.vitality + 'Speed:' + self.speed + 'Physical strength:' + \
+              self.phys_strength + 'Spirit Strength:' + self.spirit_strength + \
+              'Intellectual Strength:' + self.int_strength + \
+              'Pysical endurance:' + self.phys_endur + 'Spiritual Endurance:' + \
+              self.spirit_endur + 'Intellectual Endurance:' + self.int_endur
 
