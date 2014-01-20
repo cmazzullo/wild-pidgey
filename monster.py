@@ -1,5 +1,5 @@
 from random import randint
-from attack import attack
+from attack import Attack
 
 class Monster:
     """A framework for the monsters in States of Matter"""
@@ -14,14 +14,14 @@ class Monster:
         self.moveset            = moveset
 
         #used to save base stats
-        self.vitality 		= vitality
-        self.speed 	    	= speed 
+        self.vitality = vitality
+        self.speed = speed 
         self.phys_strength 	= phys_strength 
-        self.spirit_strengt	= spirit_strength
-        self.int_strength 	= int_strength
-        self.phys_endur 	= phys_endur
-        self.spirit_endur 	= spirit_endur
-        self.int_endur 		= int_endur
+        self.spirit_strength	= spirit_strength
+        self.int_strength = int_strength
+        self.phys_endur	= phys_endur
+        self.spirit_endur = spirit_endur
+        self.int_endur = int_endur
 
         #used to save temporary stats per battle
         self.hp = vitality
@@ -53,6 +53,8 @@ class Monster:
     #	Liquid ///> Solid
     #
     def recieve_attack(self, attack, enemy_monster):
+        print 'in recieve_attack for attack', attack.name
+
         if attack == None:
             return
         if attack.attack_attribute == "physical":
@@ -123,7 +125,12 @@ class Monster:
                 
         total_damage = (attribute_damage * type_damage_0 * type_damage_1 *
                         state_damage * crit_damage)
+
+        print 'down at the bottom'
         self.hp = self.hp - total_damage
+        print 'total damage = ', total_damage
+        print 'hp = ', self.hp
+        return total_damage
 
 
     def str(self):
