@@ -30,6 +30,3 @@ class Player():
             if not(m.hp <= 0):
                 return False
         return True
-            
-            
-            

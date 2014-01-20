@@ -10,10 +10,14 @@ s.bind((host, port))        # Bind to the port
 s.listen(5)                 # Now wait for client connection.
 while True:
    c, addr = s.accept()     # Establish connection with client.
+   s.listen(5)              # Wait for a second client
+   c2, addr2 = s.accept()
    if c and addr:
-       print 'Got connection from ', addr
+       print '(Client 1: Got connection from ', addr
        c.send('Thank you for connecting')
-       break
+   if c2 and addr2:
+       print '(Client 2: Got connection from ', addr2
+       c2.send('Thank you for connecting as well')
 
 while True:
     print "Asking client for name..."
@@ -22,7 +26,7 @@ while True:
         c.send("Nice to meet you " + name)
         break
 
+
 print "about to close..."
 c.close()                  # Close the connection
 print ("connection closed for " + str(addr))
-
