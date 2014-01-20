@@ -1,4 +1,4 @@
-﻿# by Timothy Downs, inputbox written for my map editor
+# by Timothy Downs, inputbox written for my map editor
 
 # This program needs a little cleaning up
 # It ignores the shift key
@@ -57,9 +57,10 @@ def ask(screen, question):
     display_box(screen, question + ": " + string.join(current_string,""))
   return string.join(current_string,"")
 
+"""
 def main():
   screen = pygame.display.set_mode((320,240))
   print ask(screen, "Name") + " was entered"
 
 if __name__ == '__main__': main()
-
+"""
