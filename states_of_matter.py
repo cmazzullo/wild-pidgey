@@ -13,7 +13,9 @@ import pygame,os,sys,math
 from pygame.locals import *
 import random
 import util
-
+import inputbox
+import client
+import traceback
 
 if not pygame.font: print 'Warning, fonts disabled'
 if not pygame.mixer: print 'Warning, sound disabled'
@@ -111,9 +113,7 @@ class Button(pygame.sprite.Sprite):
 class MenuControl(object):
     def __init__(self):
         self.bools = {}
-        self.bools["in_start_screen"] = False
-        self.bools["in_main_menu"] = False
-        self.bools["in_game"] = False
+        self.make_all_false
 
     def set_in_start_screen(self, boolean):
         self.make_all_false()
@@ -127,9 +127,20 @@ class MenuControl(object):
         self.make_all_false()
         self.bools["in_game"] = boolean
 
+    def set_in_enter_name(self, boolean):
+        self.make_all_false()
+        self.bools["in_enter_name"] = boolean
+
+    def set_in_battle(self, boolean):
+        self.make_all_false()
+        self.bools["in_battle"] = boolean
+
     def make_all_false(self):
-        for b in self.bools:
-            b = False
+        self.bools["in_start_screen"] = False
+        self.bools["in_main_menu"] = False
+        self.bools["in_game"] = False
+        self.bools["in_enter_name"] = False
+        self.bools["in_battle"] = False
 
 
 def main():
@@ -180,8 +191,13 @@ def main():
     gates_closed = Animation('animation/gates/gates_closed/gates_closed_', 13, (0, 0), False)
     gates_opened = Animation('animation/gates/gates_opened/gates_closed_', 13, (0, 0), False)
 
+    player1_monster = Button("question_mark_small.jpg", "question_mark_small.jpg", (background.get_width()/3, 4.5*background.get_height()/17))
+    player2_monster = Button("question_mark_small.jpg", "question_mark_small.jpg", (2*background.get_width()/3, 2.5*background.get_height()/17))
+
     menu_control = MenuControl()
     menu_control.set_in_start_screen(True)
+    login_name = ""
+    login_control = False
     
     #game driver
     while 1:
@@ -200,27 +216,52 @@ def main():
                 mouse.unclick()
                 if menu_control.bools["in_start_screen"] and start_button.clicked:
                     #enter main manu
+                    start_button.set_unclicked()
+                    all_sprites.empty()
+                    #update again for login section
+                    all_sprites.update()
+                    screen.blit(background, (0, 0))
+                    all_sprites.draw(screen)
+                    pygame.display.flip() 
+                    menu_control.set_in_enter_name(True)
+                    login_name = inputbox.ask(screen, "Login:  ")
+                    print ("login name is:  " + login_name)
+                elif menu_control.bools["in_start_screen"]:
+                    start_button.set_unclicked()
+
+                if (menu_control.bools["in_enter_name"]) and (login_name != ""):
+                    all_sprites.add(gates_closed)
                     menu_control.set_in_main_menu(True)
                     start_button.set_unclicked()
                     all_sprites.empty()
                     all_sprites.add(battle_button, options_button, mouse)
                     all_sprites.add(gates_closed)
-                elif menu_control.bools["in_start_screen"]:
-                    start_button.set_unclicked()
+                    try:
+                        print "Attempting to create client....."
+                        client.createClient(login_name)
+                    except Exception:
+                        traceback.print_exc() 
+                        pass
+                    
                 if menu_control.bools["in_main_menu"] and battle_button.clicked:
+                    all_sprites.empty()
+                    all_sprites.add(player1_monster, player2_monster, mouse)
                     all_sprites.add(gates_closed)
+                    gates_closed.restart()
+                    gates_opened.restart()
                     battle_button.set_unclicked()
+                    menu_control.set_in_battle(True)
                 if menu_control.bools["in_main_menu"] and options_button.clicked:
                     all_sprites.add(gates_closed)
+                    gates_closed.restart()
+                    gates_opened.restart()
                     options_button.set_unclicked()
 
         if gates_closed.complete:
             all_sprites.remove(gates_closed)
-            gates_closed.restart()
             all_sprites.add(gates_opened)
         if gates_opened.complete:
             all_sprites.remove(gates_opened)
-            gates_opened.restart()
 
         all_sprites.update()
 
