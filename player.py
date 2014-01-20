@@ -21,6 +21,7 @@ class Player():
     def make_move(self, move, choice):
         if move == "switch":
             self.lead = choice
+            self.lead.reset_stat_mods()
             self.current_attack = None
         elif move == "attack":
             self.current_attack = choice

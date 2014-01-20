@@ -37,20 +37,21 @@ player2.set_monsters([make_monster('Vulpix')])
 
 # The state needs to be reported after every turn
 def print_state():
-    print '========================================='
-    print 'Player 1:\t', player1.name
-    print '\tLead:\t', player1.lead.name
-    print '\tHP:\t', player1.lead.hp
-    print '-----------------------------------------'
-    print 'Player 2:\t', player2.name
-    print '\tLead:\t', player2.lead.name
-    print '\tHP:\t', player2.lead.hp
-    print '========================================='
+    print '|========================================='
+    print '|Player 1:', player1.name
+    print '|Lead:', player1.lead.name
+    print '|HP:', player1.lead.hp
+    print '|-----------------------------------------'
+    print '|Player 2:', player2.name
+    print '|Lead:', player2.lead.name
+    print '|HP:', player2.lead.hp
+    print '|========================================='
+    print 
 
 # Performs the turn of the player passed as a parameter
 def do_turn(p):
     while(True):
-        _input = raw_input("Type 'a' to attack or 's' to switch.")
+        _input = raw_input("(Type 'a' to attack or 's' to switch)")
 
         # If the player wants to attack:
         if(_input == 'a'):
@@ -60,8 +61,8 @@ def do_turn(p):
                 c += 1
 
             while(True):
-                _input = raw_input("Type the number of the attack you'd like " 
-                "to use.")
+                _input = raw_input("(Type the number of the attack you'd like " 
+                "to use)")
                 if(_input == '1'):
                     p.make_move('attack', p.lead.moveset[0])
                     break
@@ -76,7 +77,7 @@ def do_turn(p):
                     break
 
             print ''
-            print '!!!Player 1 attacks with ', p.current_attack.name
+            print '!!!Player 1 attacks with', p.current_attack.name
             print ''
             break
 
@@ -87,8 +88,8 @@ def do_turn(p):
                 print (str(c) + '. ' + m.name)
                 c += 1
             while(True):
-                _input = raw_input("Type the number of the monster you'd like " 
-                                   "to use.")
+                _input = raw_input("(Type the number of the monster you'd like " 
+                                   "to use)")
                 if(_input == '1'):
                     p.make_move('switch', p.monsters[0])
                     break
@@ -117,7 +118,7 @@ def do_turn(p):
 # The main loop of the game, runs everything
 while(not player1.has_lost() and not player2.has_lost()):
     print_state()
-    print "------------Player 1's turn----------"
+    print "Player 1's turn:"
     do_turn(player1)
     player2.lead.recieve_attack(player1.current_attack, player1.lead)
 

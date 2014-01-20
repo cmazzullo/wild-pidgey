@@ -26,7 +26,44 @@ class Monster:
         #used to save temporary stats per battle
         self.hp = vitality
         self.current_state = elements[0]
+        self.temp_speed = speed 
+        self.temp_phys_strength	= phys_strength 
+        self.temp_spirit_strength = spirit_strength
+        self.temp_int_strength = int_strength
+        self.temp_phys_endur = phys_endur
+        self.temp_spirit_endur = spirit_endur
+        self.temp_int_endur = int_endur
 
+    # Apply the stat modifications from an attack to the monster's temporary
+    # stats
+    def apply_stat_mod(self, mod):
+        if mod == None:
+            return
+        elif mod == 'speed':
+            self.temp_speed = 0.5 * self.temp_speed
+        elif mod == 'phys_strength':
+            self.temp_phys_strength = 0.5 * self.temp_phys_strength
+        elif mod == 'spirit_strength':
+            self.temp_spirit_strength = 0.5 * self.temp_spirit_strength
+        elif mod == 'int_strength':
+            self.temp_int_strength = 0.5 * self.temp_int_strength
+        elif mod == 'phys_endur':
+            self.temp_phys_endur = 0.5 * self.temp_phys_endur
+        elif mod == 'spirit_endur':
+            self.temp_spirit_endur = 0.5 * self.temp_spirit_endur
+        elif mod == 'int_endur':
+            self.temp_int_endur = 0.5 * self.temp_int_endur
+
+    # Resets stat mods, returns all stats to default values
+    def reset_stat_mods(self):
+        self.temp_speed = self.speed 
+        self.temp_phys_strength	= self.phys_strength 
+        self.temp_spirit_strength = self.spirit_strength
+        self.temp_int_strength = self.int_strength
+        self.temp_phys_endur = self.phys_endur
+        self.temp_spirit_endur = self.spirit_endur
+        self.temp_int_endur = self.int_endur
+            
     # returns total incoming damage for a given attack
     #	Physical Strength ===> Spiritual Endurance
     #	Spritual Strength ===> Intellectual Endurance
@@ -53,7 +90,6 @@ class Monster:
     #	Liquid ///> Solid
     #
     def recieve_attack(self, attack, enemy_monster):
-        print 'in recieve_attack for attack', attack.name
 
         if attack == None:
             return
@@ -126,10 +162,11 @@ class Monster:
         total_damage = (attribute_damage * type_damage_0 * type_damage_1 *
                         state_damage * crit_damage)
 
-        print 'down at the bottom'
         self.hp = self.hp - total_damage
-        print 'total damage = ', total_damage
-        print 'hp = ', self.hp
+
+        # If the attack has a stat modification, apply it
+        self.apply_stat_mod(attack.stat_mod)
+
         return total_damage
 
 
