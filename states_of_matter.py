@@ -131,11 +131,16 @@ class MenuControl(object):
         self.make_all_false()
         self.bools["in_enter_name"] = boolean
 
+    def set_in_battle(self, boolean):
+        self.make_all_false()
+        self.bools["in_battle"] = boolean
+
     def make_all_false(self):
         self.bools["in_start_screen"] = False
         self.bools["in_main_menu"] = False
         self.bools["in_game"] = False
         self.bools["in_enter_name"] = False
+        self.bools["in_battle"] = False
 
 
 def main():
@@ -185,6 +190,9 @@ def main():
     #cut = Animation('animation/cuts/cut_c/cut_c_', 5, (600, -25))
     gates_closed = Animation('animation/gates/gates_closed/gates_closed_', 13, (0, 0), False)
     gates_opened = Animation('animation/gates/gates_opened/gates_closed_', 13, (0, 0), False)
+
+    player1_monster = Button("question_mark_small.jpg", "question_mark_small.jpg", (background.get_width()/3, 4.5*background.get_height()/17))
+    player2_monster = Button("question_mark_small.jpg", "question_mark_small.jpg", (2*background.get_width()/3, 2.5*background.get_height()/17))
 
     menu_control = MenuControl()
     menu_control.set_in_start_screen(True)
@@ -236,10 +244,13 @@ def main():
                         pass
                     
                 if menu_control.bools["in_main_menu"] and battle_button.clicked:
+                    all_sprites.empty()
+                    all_sprites.add(player1_monster, player2_monster, mouse)
                     all_sprites.add(gates_closed)
                     gates_closed.restart()
                     gates_opened.restart()
                     battle_button.set_unclicked()
+                    menu_control.set_in_battle(True)
                 if menu_control.bools["in_main_menu"] and options_button.clicked:
                     all_sprites.add(gates_closed)
                     gates_closed.restart()
