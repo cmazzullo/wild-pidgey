@@ -14,7 +14,7 @@ Attack('att4', 4, 'normal', None)
 
 def get_attack(name):
     for a in attacks:
-        if a.name is name:
+        if a.name == name:
             return a
 
 class Monster:
@@ -26,7 +26,6 @@ class Monster:
         self.attack_names = attack_names
         self.attacks = []
         for a in attack_names:
-            att1 = get_attack(a)
             self.attacks.append(get_attack(a))
     
         #used to save base stats
@@ -49,17 +48,33 @@ class Monster:
         self.temp_spirit_endur = spirit_endur
         self.temp_int_endur = int_endur
         self.state = 'solid'
+
+    def __str__(self):
+        s = str.format(
+            """Name:                {}
+Types:               {}
+Attacks:             {}
+Vitality:            {}
+Speed:               {}
+Physical Strength    {}
+Spirit Strength      {}
+Mental Strength      {}
+Pysical Endurance    {}
+Spirit Endurance     {}
+Mental Endurance     {}\n""", self.name, self.types, self.attack_names,
+               self.vitality, self.speed, self.phys_strength,
+               self.spirit_strength, self.int_strength, self.phys_endur,
+               self.spirit_endur, self.int_endur)
+        return s
     
-monsters = [
-    Monster('mon1', ['air', 'water'], ['att1', 'att2', 'att3', 'att4'], 10, 10,
-            10, 10, 10, 10, 10, 10),
-    Monster('mon2', ['air', 'water'], ['att1', 'att2', 'att3', 'att4'], 10, 10,
-            10, 10, 10, 10, 10, 10),
-    Monster('mon3', ['air', 'water'], ['att1', 'att2', 'att3', 'att4'], 10, 10,
-            10, 10, 10, 10, 10, 10),
-    Monster('mon4', ['air', 'water'], ['att1', 'att2', 'att3', 'att4'], 10, 10,
-            10, 10, 10, 10, 10, 10),
-]
+# Create monsters, the master list of monsters
+monsters = []
+f = open('Data.txt')
+for line in f.readlines():
+    l = line.split(';')
+    monsters.append(Monster(l[0], l[1].split(','), l[2].split(','), int(l[3]), 
+                    int(l[4]), int(l[5]), int(l[6]), int(l[7]), int(l[8]),
+                    int(l[9]), int(l[10])))
 
 def make_monster(name):
     for m in monsters:
