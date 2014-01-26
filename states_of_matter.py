@@ -93,10 +93,11 @@ class Button(pygame.sprite.Sprite):
         self.clicked = 0
         self.image, self.rect = util.load_image(original_image_source, None)
         self.rect.midtop = location_coordinates
+        self.selected = 0
 
     def update(self):
         "update on click or unclick"
-        if self.clicked:
+        if self.clicked or self.selected:
             self.image, self.rect = util.load_image(self.clicked_image_source, None)
             self.rect.midtop = self.location_coordinates
         else:
@@ -109,6 +110,11 @@ class Button(pygame.sprite.Sprite):
     def set_unclicked(self):
         self.clicked = 0
 
+    def set_selected(self):
+        self.selected = 1
+
+    def set_unselected(self):
+        self.selected = 0
 
 class MenuControl(object):
     def __init__(self):
@@ -175,8 +181,6 @@ def main():
     pygame.display.flip()
 
     #for start screen
-    flamethrower = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (-50,0), True)
-    bolt_tsela = Animation('animation/voltage_0/bolt_tesla/bolt_tesla_', 10, (600, 200), True)
     mouse = Mouse()
     start_button = Button("start_button_original.jpg", "start_button_clicked.jpg", (background.get_width()/2, 12.5*background.get_height()/17))
     all_sprites = pygame.sprite.OrderedUpdates((start_button, mouse)) #order based on how they are added!
@@ -191,8 +195,25 @@ def main():
     gates_closed = Animation('animation/gates/gates_closed/gates_closed_', 13, (0, 0), False)
     gates_opened = Animation('animation/gates/gates_opened/gates_closed_', 13, (0, 0), False)
 
-    player1_monster = Button("question_mark_small.jpg", "question_mark_small.jpg", (background.get_width()/3, 4.5*background.get_height()/17))
-    player2_monster = Button("question_mark_small.jpg", "question_mark_small.jpg", (2*background.get_width()/3, 2.5*background.get_height()/17))
+    player1_monster = Button("monsters/fire_dino2.png", "monsters/fire_dino2.png", (background.get_width()/5, 1*background.get_height()/17))
+    player2_monster = Button("monsters/fire_dino2_flipped.png", "monsters/fire_dino2_flipped.png",  (4*background.get_width()/5, 1*background.get_height()/17))
+    attack_button = Button("attack_button_original.jpg", "attack_button_clicked.jpg", (1.25*background.get_width()/5, 13*background.get_height()/17))
+    switch_button = Button("switch_button_original.jpg", "switch_button_clicked.jpg", (3.75*background.get_width()/5, 13*background.get_height()/17))
+    back_button = Button("back_button_original.jpg", "back_button_clicked.jpg", (.25*background.get_width()/5, 15*background.get_height()/17))
+
+    player1_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
+    player2_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
+    
+    attack1_button = Button("attack_button_images/mud_bomb_original.jpg", "attack_button_images/mud_bomb_clicked.jpg", (1.5*background.get_width()/5, 11.5*background.get_height()/17))
+    attack2_button = Button("attack_button_images/mud_bomb_original.jpg", "attack_button_images/mud_bomb_clicked.jpg", (3.5*background.get_width()/5, 11.5*background.get_height()/17))
+    attack3_button = Button("attack_button_images/mud_bomb_original.jpg", "attack_button_images/mud_bomb_clicked.jpg", (1.5*background.get_width()/5, 14.5*background.get_height()/17))
+    attack4_button = Button("attack_button_images/mud_bomb_original.jpg", "attack_button_images/mud_bomb_clicked.jpg", (3.5*background.get_width()/5, 14.5*background.get_height()/17))
+    solid_button = Button("solid_state_button_unselected.jpg", "solid_state_button_selected.jpg", (4.6*background.get_width()/5, 10*background.get_height()/17))
+    liquid_button = Button("liquid_state_button_unselected.jpg", "liquid_state_button_selected.jpg", (4.6*background.get_width()/5, 11.75*background.get_height()/17))
+    gas_button = Button("gas_state_button_unselected.jpg", "gas_state_button_selected.jpg", (4.6*background.get_width()/5, 13.5*background.get_height()/17))
+    plasma_button = Button("plasma_state_button_unselected.jpg", "plasma_state_button_selected.jpg", (4.6*background.get_width()/5, 15.25*background.get_height()/17))
+
+
 
     menu_control = MenuControl()
     menu_control.set_in_start_screen(True)
@@ -244,8 +265,18 @@ def main():
                         pass
                     
                 if menu_control.bools["in_main_menu"] and battle_button.clicked:
+                    #battle music!
+                    pygame.mixer.music.load("music/Fated Encounter.mp3")
+                    pygame.mixer.music.play(-1)
+
+                    #update background
+                    background = pygame.Surface(screen.get_size(), pygame.SRCALPHA, 32)
+                    background = background.convert()
+                    screen.blit(background, (0, 0))
+                    pygame.display.flip()
+    
                     all_sprites.empty()
-                    all_sprites.add(player1_monster, player2_monster, mouse)
+                    all_sprites.add(player1_monster, player2_monster, attack_button, switch_button, mouse)
                     all_sprites.add(gates_closed)
                     gates_closed.restart()
                     gates_opened.restart()
@@ -256,6 +287,79 @@ def main():
                     gates_closed.restart()
                     gates_opened.restart()
                     options_button.set_unclicked()
+
+                if menu_control.bools["in_battle"] and attack_button.clicked:
+                    attack_button.set_unclicked()
+                    all_sprites.remove(attack_button, switch_button, mouse)
+                    #update attack buttons from monster
+                    #only add states that the monster can be
+                    solid_button.set_clicked()
+                    liquid_button.set_unclicked()
+                    gas_button.set_unclicked()
+                    plasma_button.set_unclicked()
+                    all_sprites.add(attack1_button, attack2_button, attack3_button, attack4_button, solid_button, liquid_button, gas_button, plasma_button, back_button, mouse)
+                if menu_control.bools["in_battle"] and switch_button.clicked:
+                    switch_button.set_unclicked()
+                    all_sprites.remove(attack_button, switch_button, mouse)
+                    all_sprites.add(back_button, mouse)
+                if menu_control.bools["in_battle"] and back_button.clicked:
+                    back_button.set_unclicked()
+                    all_sprites.remove(attack1_button, attack2_button, attack3_button, attack4_button, solid_button, liquid_button, gas_button, plasma_button,  back_button, mouse)
+                    all_sprites.add(attack_button, switch_button, mouse)
+
+                if menu_control.bools["in_battle"] and player1_attack_animation.complete:
+                    all_sprites.remove(player1_attack_animation)
+                if menu_control.bools["in_battle"] and player2_attack_animation.complete:
+                    all_sprites.remove(player2_attack_animation)
+                    
+                if menu_control.bools["in_battle"] and attack1_button.clicked:
+                    player1_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
+                    all_sprites.remove(mouse)
+                    all_sprites.add(player1_attack_animation, mouse)
+                    attack1_button.set_unclicked()
+                if menu_control.bools["in_battle"] and attack2_button.clicked:
+                    attack2_button.set_unclicked()
+                if menu_control.bools["in_battle"] and attack3_button.clicked:
+                    attack3_button.set_unclicked()
+                if menu_control.bools["in_battle"] and attack4_button.clicked:
+                    attack4_button.set_unclicked()
+                if menu_control.bools["in_battle"] and solid_button.clicked:
+                    solid_button.set_selected()
+                    liquid_button.set_unselected()
+                    gas_button.set_unselected()
+                    plasma_button.set_unselected()
+                    solid_button.set_unclicked()
+                    liquid_button.set_unclicked()
+                    gas_button.set_unclicked()
+                    plasma_button.set_unclicked()
+                if menu_control.bools["in_battle"] and liquid_button.clicked:
+                    solid_button.set_unselected()
+                    liquid_button.set_selected()
+                    gas_button.set_unselected()
+                    plasma_button.set_unselected()
+                    solid_button.set_unclicked()
+                    liquid_button.set_unclicked()
+                    gas_button.set_unclicked()
+                    plasma_button.set_unclicked()
+                if menu_control.bools["in_battle"] and gas_button.clicked:
+                    solid_button.set_unselected()
+                    liquid_button.set_unselected()
+                    gas_button.set_selected()
+                    plasma_button.set_unselected()
+                    solid_button.set_unclicked()
+                    liquid_button.set_unclicked()
+                    gas_button.set_unclicked()
+                    plasma_button.set_unclicked()
+                if menu_control.bools["in_battle"] and plasma_button.clicked:
+                    solid_button.set_unselected()
+                    liquid_button.set_unselected()
+                    gas_button.set_unselected()
+                    plasma_button.set_selected()
+                    solid_button.set_unclicked()
+                    liquid_button.set_unclicked()
+                    gas_button.set_unclicked()
+                    plasma_button.set_unclicked()
+                    
 
         if gates_closed.complete:
             all_sprites.remove(gates_closed)
