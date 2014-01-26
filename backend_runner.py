@@ -37,15 +37,15 @@ player2.set_monsters([make_monster('Vulpix')])
 
 # The state needs to be reported after every turn
 def print_state():
-    print '|========================================='
-    print '|Player 1:', player1.name
-    print '|Lead:', player1.lead.name
-    print '|HP:', player1.lead.hp
-    print '|-----------------------------------------'
-    print '|Player 2:', player2.name
-    print '|Lead:', player2.lead.name
-    print '|HP:', player2.lead.hp
-    print '|========================================='
+    print '========================================='
+    print 'Player 1:', player1.name
+    print 'Lead:', player1.lead.name
+    print 'HP:', player1.lead.hp
+    print '-----------------------------------------'
+    print 'Player 2:', player2.name
+    print 'Lead:', player2.lead.name
+    print 'HP:', player2.lead.hp
+    print '========================================='
     print 
 
 # Performs the turn of the player passed as a parameter
