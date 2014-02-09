@@ -58,7 +58,16 @@ def game_over():
     pass
 
 def get_state(p1, p2):
-    return str.format('Player1: {}\nLead: {}\nHP: {}\nState: {}\n\n'
-                      'Player2: {}\n' 'Lead: {}\nHP: {}\nState: {}\n', p1.name, 
-                      p1.lead.name, p1.lead.hp, p1.lead.state, p2.name, 
-                      p2.lead.name, p2.lead.hp, p2.lead.state)
+    return str.format('=========================================\n'             
+                   'Player 1: {}\n'                                             
+                   'Lead: {}\n'                                                 
+                   'HP: {}\n'                                                   
+                   'State: {}\n'
+                   '-----------------------------------------\n'                
+                   'Player 1: {}\n'                                             
+                   'Lead: {}\n'                                                 
+                   'HP: {}\n'                                                   
+                   'State: {}\n'
+                   '=========================================\n',               
+                   p1.name, p1.lead.name, p1.lead.hp, p1.lead.state,
+                   p2.name, p2.lead.name, p2.lead.hp, p2.lead.state)
