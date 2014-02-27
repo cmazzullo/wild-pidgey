@@ -224,6 +224,7 @@ def main():
     while 1:
         clock.tick(60)
 
+        #button updates here
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
@@ -357,14 +358,12 @@ def main():
                     gas_button.set_unclicked()
                     plasma_button.set_unclicked()
                     
-
+        #do animation updates here.  
         if gates_closed.complete:
             all_sprites.remove(gates_closed)
             all_sprites.add(gates_opened)
         if gates_opened.complete:
             all_sprites.remove(gates_opened)
-
-
         if menu_control.bools["in_battle"] and player1_attack_animation.complete:
             all_sprites.remove(player1_attack_animation)
         if menu_control.bools["in_battle"] and player2_attack_animation.complete:
