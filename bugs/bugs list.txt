@@ -7,3 +7,5 @@ FIXED bug3:  doesnt look through all frames...it fails to load last frame and al
 FIXED bug4:  cant hit 1 of 2 buttons (baesd on the order i add them to the buttons list) on the menu screen.
 
 bug5:  white-space of gates images aren't see through...why not?
+
+bug6:  if you click the attack 1 button fast, then fire animation will get stuck. do i click faster than the update does?  

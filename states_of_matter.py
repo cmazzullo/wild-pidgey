@@ -307,10 +307,7 @@ def main():
                     all_sprites.remove(attack1_button, attack2_button, attack3_button, attack4_button, solid_button, liquid_button, gas_button, plasma_button,  back_button, mouse)
                     all_sprites.add(attack_button, switch_button, mouse)
 
-                if menu_control.bools["in_battle"] and player1_attack_animation.complete:
-                    all_sprites.remove(player1_attack_animation)
-                if menu_control.bools["in_battle"] and player2_attack_animation.complete:
-                    all_sprites.remove(player2_attack_animation)
+
                     
                 if menu_control.bools["in_battle"] and attack1_button.clicked:
                     player1_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
@@ -366,6 +363,12 @@ def main():
             all_sprites.add(gates_opened)
         if gates_opened.complete:
             all_sprites.remove(gates_opened)
+
+
+        if menu_control.bools["in_battle"] and player1_attack_animation.complete:
+            all_sprites.remove(player1_attack_animation)
+        if menu_control.bools["in_battle"] and player2_attack_animation.complete:
+            all_sprites.remove(player2_attack_animation)
 
         all_sprites.update()
 
