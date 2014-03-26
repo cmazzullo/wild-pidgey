@@ -3,8 +3,6 @@ import socket
 # these contain all important information about the connected players
 # playerN = (name, connection, number) where number is 1 or 2
 
-
-
 # waits for a player to connect
 # returns a nested tuple containing both client sockets
 # in the form (conn1, conn2)
@@ -63,23 +61,24 @@ def choose_action((player, conn)):
 def choose_attack((player, conn)):
     attack_list = 'choose_attack'
     c = 1
-    for a in attacks:
-        attack_list = str(c) + '. ' + attack_list + a.name + '\n'
+    for a in player.lead.attacks:
+        attack_list = attack_list + str(c) + '. ' + a.name + '\n'
         c += 1
     conn.sendall(attack_list)
     n =  conn.recv(1024)
-    return player.attacks[int(n)]
+    return player.lead.attacks[int(n) - 1]
 
 # prompts for lead choice
 # returns lead
 def choose_lead((player, conn)):
     lead_list = 'choose_lead'
     c = 1
-    for m in monsters:
+    for m in player.monsters:
         lead_list = lead_list + str(c) + '. ' + m.name + '\n'
         c += 1
+    conn.sendall(lead_list)
     n = conn.recv(1024)
-    return player.monsters[int(n)]
+    return player.monsters[int(n) - 1]
 
 # prompts for state choice
 # returns state
@@ -87,8 +86,10 @@ def choose_state((player, conn)):
     conn.sendall('choose_state')
     states = ('solid', 'liquid', 'gas', 'plasma')
     n = conn.recv(1024)
-    return states[int(n)]
+    return states[int(n) - 1]
 
 def send_state(state, (p1, conn1), (p2, conn2)):
     conn1.sendall('state' + state)
+    conn1.recv(1024)
     conn2.sendall('state' + state)
+    conn2.recv(1024)
