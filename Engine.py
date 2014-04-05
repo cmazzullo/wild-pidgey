@@ -1,32 +1,32 @@
 import Database
-import Fakeserver as fs
+import server
 
 # PUBLIC METHODS:
 
 # starts the game between the two players
 # returns the name of the winner
 def run_game():
-    (conn1, conn2) = fs.connect()
-    name1 = fs.get_player_name(conn1)
-    name2 = fs.get_player_name(conn2)
+    (conn1, conn2) = server.poll()
+    name1 = server.get_player_name(conn1)
+    name2 = server.get_player_name(conn2)
     p1 = (Database.get_player(name1), conn1) # store the players as  
     p2 = (Database.get_player(name2), conn2) # tuples containing all
     on_player = p1                           # their data and their
     off_player = p2                          # connected socket
 
     while not game_over():
-        fs.send_state(get_state(p1[0], p2[0]), p1, p2)
-        action = fs.choose_action(on_player)
+        server.send_state(get_state(p1[0], p2[0]), p1, p2)
+        action = server.choose_action(on_player)
         if action == 'attack':
-            attack = fs.choose_attack(on_player)
+            attack = server.choose_attack(on_player)
             attacker = on_player[0].lead
             defender = off_player[0].lead
             #ATTACK LOGIC GOES HERE!
             defender.hp -= (attacker.phys_strength / 10) * attack.damage
         elif action == 'switch':
-            on_player[0].lead = fs.choose_lead(on_player)
+            on_player[0].lead = server.choose_lead(on_player)
         elif action == 'state':
-            on_player[0].lead.state = fs.choose_state(on_player)
+            on_player[0].lead.state = server.choose_state(on_player)
         on_player, off_player = off_player, on_player
     return _get_winner()
         

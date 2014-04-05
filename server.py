@@ -1,56 +1,75 @@
-#!/usr/bin/python           # This is server.py file
+import socket
 
-import socket               # Import socket module
+# these contain all important information about the connected players
+# playerN = (name, connection, number) where number is 1 or 2
 
-s = socket.socket()         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 12387                # Reserve a port for your service.
-s.bind((host, port))        # Bind to the port
+# waits for a player to connect
+# returns a nested tuple containing both client sockets
+# in the form (conn1, conn2)
+# this is unpacked in the Engine script
+def poll():
+    HOST = ''
+    PORT = 65000
+    
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((HOST, PORT))
+    s.listen(1)
+    (conn1, addr) = s.accept()
+    (conn2, addr) = s.accept()
 
-print ("Starting up s(" + str(s) + ") host(" + str(host) + ") port(" + str(port) + ")")
+    conn1.sendall('client 1 connected')
+    conn1.recv(1024)
+    conn2.sendall('client 2 connected')
+    conn2.recv(1024)
+    return (conn1, conn2)
 
-#for player1
-s.listen(5)                 # Now wait for client connection.
-while True:
-   conn1, addr1 = s.accept()     # Establish connection with client.
-   if conn1 and addr1:
-       print 'Got connection from ', addr1
-       conn1.send('Thank you for connecting')
-       break
+# takes connected socket
+# gets player name from client
+def get_player_name(conn):
+    conn.sendall('get_name')
+    return conn.recv(1024)
 
+# takes connected socket
+# prompts for action choice
+# returns the name of the choice
+def choose_action((player, conn)):
+    conn.sendall('choose_action')
+    return conn.recv(1024)
 
-#for player2
-s.listen(5)                 # Now wait for client connection.
-while True:
-   conn2, addr2 = s.accept()     # Establish connection with client.
-   if conn2 and addr2:
-       print 'Got connection from ', addr2
-       conn2.send('Thank you for connecting')
-       break
+# prompts for attack choice
+# returns attack chosen
+def choose_attack((player, conn)):
+    attack_list = 'choose_attack'
+    c = 1
+    for a in player.lead.attacks:
+        attack_list = attack_list + str(c) + '. ' + a.name + '\n'
+        c += 1
+    conn.sendall(attack_list)
+    n =  conn.recv(1024)
+    return player.lead.attacks[int(n) - 1]
 
+# prompts for lead choice
+# returns lead
+def choose_lead((player, conn)):
+    lead_list = 'choose_lead'
+    c = 1
+    for m in player.monsters:
+        lead_list = lead_list + str(c) + '. ' + m.name + '\n'
+        c += 1
+    conn.sendall(lead_list)
+    n = conn.recv(1024)
+    return player.monsters[int(n) - 1]
 
-while True:
-    print "Asking client for name..."
-    name1 = conn1.recv(1024)
-    name2 = conn2.recv(1024)
-    if name1 and name2:
-        conn1.send("Nice to meet you " + name1)
-        conn2.send("Nice to meet you " + name2)
-        break
+# prompts for state choice
+# returns state
+def choose_state((player, conn)):
+    conn.sendall('choose_state')
+    states = ('solid', 'liquid', 'gas', 'plasma')
+    n = conn.recv(1024)
+    return states[int(n) - 1]
 
-
-print "about to close..."
-conn1.close()                  # Close the connection  
-conn2.close()
-print ("connection closed for " + str(addr1) + " and " + str(addr2))
-
-"""
-while True:
-   closeInput = raw_input("Type close to end all connections:  ")
-   if closeInput == "close":
-      print "about to close..."
-      conn1.close()                  # Close the connection  
-      conn2.close()
-      print ("connection closed for " + str(addr1) + " and " + str(addr2))
-      break
-"""
+def send_state(state, (p1, conn1), (p2, conn2)):
+    conn1.sendall('state' + state)
+    conn1.recv(1024)
+    conn2.sendall('state' + state)
+    conn2.recv(1024)
