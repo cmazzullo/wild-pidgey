@@ -120,6 +120,7 @@ class MenuControl(object):
     def __init__(self):
         self.bools = {}
         self.make_all_false
+        self.nextTurn
 
     def set_in_start_screen(self, boolean):
         self.make_all_false()
@@ -140,6 +141,16 @@ class MenuControl(object):
     def set_in_battle(self, boolean):
         self.make_all_false()
         self.bools["in_battle"] = boolean
+
+    def nextTurn(self):
+        self.play1MoveLocked = False;
+        self.play2MoveLocked = False;
+
+    def player1MoveLocked(self):
+        self.play1MoveLocked = True;
+        
+    def player1MoveLocked(self):
+        self.play2MoveLocked = True;
 
     def make_all_false(self):
         self.bools["in_start_screen"] = False
@@ -200,6 +211,7 @@ def main():
     attack_button = Button("attack_button_original.jpg", "attack_button_clicked.jpg", (1.25*background.get_width()/5, 13*background.get_height()/17))
     switch_button = Button("switch_button_original.jpg", "switch_button_clicked.jpg", (3.75*background.get_width()/5, 13*background.get_height()/17))
     back_button = Button("back_button_original.jpg", "back_button_clicked.jpg", (.25*background.get_width()/5, 15*background.get_height()/17))
+    move_locked = Button("move_locked_1.jpg", "move_locked_1.jpg", (2.5*background.get_width()/5, 8.75*background.get_height()/17))
 
     player1_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
     player2_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
@@ -310,17 +322,20 @@ def main():
 
 
                     
-                if menu_control.bools["in_battle"] and attack1_button.clicked:
-                    player1_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
-                    all_sprites.remove(mouse)
-                    all_sprites.add(player1_attack_animation, mouse)
-                    attack1_button.set_unclicked()
-                if menu_control.bools["in_battle"] and attack2_button.clicked:
-                    attack2_button.set_unclicked()
-                if menu_control.bools["in_battle"] and attack3_button.clicked:
-                    attack3_button.set_unclicked()
-                if menu_control.bools["in_battle"] and attack4_button.clicked:
-                    attack4_button.set_unclicked()
+                if menu_control.bools["in_battle"] and (attack1_button.clicked or attack2_button.clicked or attack3_button.clicked or attack4_button.clicked):
+                    if attack1_button.clicked:
+                        player1_attack_animation = Animation('animation/Flames/flamethrower_/flamethrower_', 10, (player1_monster.location_coordinates[0]+50,player1_monster.location_coordinates[1]-100), False)
+                        attack1_button.set_unclicked()
+                    if attack2_button.clicked:
+                        attack2_button.set_unclicked()
+                    if attack3_button.clicked:
+                        attack3_button.set_unclicked()
+                    if attack4_button.clicked:
+                        attack4_button.set_unclicked()
+                    all_sprites.remove(attack_button, switch_button, back_button, attack1_button, attack2_button, attack3_button, attack4_button, solid_button, liquid_button, gas_button, plasma_button,  back_button, mouse)
+                    #all_sprites.add(player1_attack_animation, mouse)
+                    all_sprites.add(move_locked, mouse)
+                    #TODO:  Create packet to send to server on this player's moves.
                 if menu_control.bools["in_battle"] and solid_button.clicked:
                     solid_button.set_selected()
                     liquid_button.set_unselected()
@@ -368,6 +383,34 @@ def main():
             all_sprites.remove(player1_attack_animation)
         if menu_control.bools["in_battle"] and player2_attack_animation.complete:
             all_sprites.remove(player2_attack_animation)
+
+
+
+
+        #TODO:
+
+        #packet = get packet from server
+        #packet types:
+        #   calculated moves packet
+        #   oppenent quit packet (no response)
+        #   oppenent ready packet (optional...may not be needed)
+    
+        #if menu_control.bools["in_battle"] and (recieves "calculated moves packet" from server):
+        #   if this player made move:
+        #       play animations based on sent stats (move animations, hp changes, or switched monsters)
+        #       if this player lost all monsters and oppenent lost all monsters:
+        #           tie game!
+        #       elif this player lost all monsters:
+        #           oppenent wins!
+        #       elif opponent lost all monsters:
+        #           you win!
+        #   elif this player has not made a move:
+        #       ignore until player makes move
+        #       maybe set timer? future idea
+
+        #
+        #if oppenent quits ("oppenent quit packet" from other server via no response from other client):
+        #   you win!
 
         all_sprites.update()
 
