@@ -1,8 +1,6 @@
 import Database
 import server
 
-# PUBLIC METHODS:
-
 # starts the game between the two players
 # returns the name of the winner
 def run_game():
@@ -14,7 +12,7 @@ def run_game():
     on_player = p1                           # their data and their
     off_player = p2                          # connected socket
 
-    while not game_over():
+    while not game_over(p1[0], p2[0]):
         server.send_state(get_state(p1[0], p2[0]), p1, p2)
         action = server.choose_action(on_player)
         if action == 'attack':
@@ -28,15 +26,25 @@ def run_game():
         elif action == 'state':
             on_player[0].lead.state = server.choose_state(on_player)
         on_player, off_player = off_player, on_player
-    return _get_winner()
+    return get_winner()
         
 # returns the winning player's name after a game is over
 def get_winner():
     pass
 
 # returns true is game is over, otherwise false
-def game_over():
-    pass
+def game_over(player1, player2):
+    p1lost = True
+    for m in player1.monsters:
+        if m.hp != 0:
+            p1lost = False
+            break
+    p2lost = True
+    for m in player2.monsters:
+        if m.hp != 0:
+            p2lost = False
+            break
+    return (p1lost or p2lost)
 
 def get_state(p1, p2):
     return str.format('============================================\n'             

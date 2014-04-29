@@ -17,7 +17,7 @@ PORT = 65000 # high ports are less likely to be reserved
 name = ''
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
+s.connect((socket.gethostname(), PORT))
 print(s.recv(1024))
 s.sendall('confirm')
 

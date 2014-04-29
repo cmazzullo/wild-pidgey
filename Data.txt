@@ -1,4 +1,4 @@
-mon1;air,water;att1,att2,att3,att4;10;10;10;10;10;10;10;10;
-mon2;air,water;att1,att2,att3,att4;10;10;10;10;10;10;10;10;
-mon3;air,water;att1,att2,att3,att4;10;10;10;10;10;10;10;10;
-mon4;air,water;att1,att2,att3,att4;10;10;10;10;10;10;10;10;
+mon1;air,water;att1,att2,att3,att4;1;10;10;10;10;10;10;10;
+mon2;air,water;att1,att2,att3,att4;1;10;10;10;10;10;10;10;
+mon3;air,water;att1,att2,att3,att4;1;10;10;10;10;10;10;10;
+mon4;air,water;att1,att2,att3,att4;1;10;10;10;10;10;10;10;

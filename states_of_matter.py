@@ -14,7 +14,7 @@ from pygame.locals import *
 import random
 import util
 import inputbox
-import client
+#import client
 import traceback
 
 if not pygame.font: print 'Warning, fonts disabled'
