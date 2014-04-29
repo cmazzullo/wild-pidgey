@@ -9,3 +9,7 @@ FIXED bug4:  cant hit 1 of 2 buttons (baesd on the order i add them to the butto
 bug5:  white-space of gates images aren't see through...why not?
 
 bug6:  if you click the attack 1 button fast, then fire animation will get stuck. do i click faster than the update does?  
+
+bug7: Monsters never faint and can have negative HP.
+
+bug 8: If all of a player's monsters die, the game client crashes.
