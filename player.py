@@ -28,6 +28,6 @@ class Player():
 
     def has_lost(self):
         for m in self.monsters:
-            if not(m.hp <= 0):
+            if m.hp > 0:
                 return False
         return True

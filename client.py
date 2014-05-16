@@ -1,25 +1,24 @@
 # Python prompted client
-# this client connects to a server, which prompts it for a response
-# the client then asks the user for input, which it relays to the 
-# server. 
 
-# I want to abstract this into a general client-server interface
-# for the game States of Matter.
-
-# This will be between the client logic and the server engine, swapping
-# game state and player actions via strings.
+# This needs to be able to retrieve and process messages from a server
+# and not crash on errors
 
 import socket
 import fileinput # needed for interactive user input
+import thread
 
-HOST = socket.gethostname() # runs on the local host
-PORT = 65000 # high ports are less likely to be reserved
-name = ''
-
+global s
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((socket.gethostname(), PORT))
-print(s.recv(1024))
-s.sendall('confirm')
+
+def connect ():
+    HOST = socket.gethostname() # runs on the local host
+    PORT = 65000 # high ports are less likely to be reserved
+    name = ''
+
+
+    s.connect((socket.gethostname(), PORT))
+    print(s.recv(1024))
+    s.sendall('confirm')
 
 def process(data):
     if data == 'get_name':
@@ -34,6 +33,15 @@ def process(data):
         return choose_state()
     elif data[:5] == 'state':
         return recieve_state(data[5:])
+    elif data == 'loss':
+        print "you lose"
+        return 'quit'
+    elif data == 'win':
+        print "you win"
+        return 'quit'
+    
+    else:
+        return "error"
     
 def get_name():
     print "Please enter your Player Name: "
@@ -41,15 +49,15 @@ def get_name():
     return name
 
 def choose_action():
-    print str.format("{}'s turn:",name)
+    print str.format("Your turn:")
     while True:
-        s = raw_input('Do you want to:\n1. Attack\n2. Switch\n3.'
+        input = raw_input('Do you want to:\n1. Attack\n2. Switch\n3.'
                       ' Change State\n--> ')
-        if s == '1':
+        if input == '1':
             return 'attack'
-        elif s == '2':
+        elif input == '2':
             return 'switch'
-        elif s == '3':
+        elif input == '3':
             return 'state'
         else:
             print "Please enter a valid option."
@@ -76,9 +84,14 @@ def recieve_state(state):
     print state
     return 'confirm'
 
-# this is the main loop of the client
-reply = ''
-while reply != 'quit':
-    data = s.recv(1024)
-    reply = process(data)
-    s.sendall(reply)
+def listen():
+    # this is the main loop of the client
+    reply = ''
+    while reply != 'quit':
+        data = s.recv(1024)
+        reply = process(data)
+        s.sendall(reply)
+    s.close()
+    
+connect()
+listen()

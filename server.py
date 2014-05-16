@@ -15,10 +15,10 @@ def poll():
     s.bind((HOST, PORT))
     s.listen(1)
     (conn1, addr) = s.accept()
-    (conn2, addr) = s.accept()
-
     conn1.sendall('client 1 connected')
     conn1.recv(1024)
+
+    (conn2, addr) = s.accept()
     conn2.sendall('client 2 connected')
     conn2.recv(1024)
     return (conn1, conn2)
@@ -73,3 +73,11 @@ def send_state(state, (p1, conn1), (p2, conn2)):
     conn1.recv(1024)
     conn2.sendall('state' + state)
     conn2.recv(1024)
+
+def send_loss ((player, conn)):
+    conn.sendall('loss')
+    conn.recv(1024)
+
+def send_win ((player, conn)):
+    conn.sendall('win')
+    conn.recv(1024)
