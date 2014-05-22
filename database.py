@@ -1,35 +1,27 @@
-class Attack:
-    def __init__(self, name, damage, types, stat_mods):
-        self.name = name
-        self.damage = damage
-        self.types = types
-        self.stat_mods = stat_mods
+class Monster:
+    def __init__(self, stats):
+        self.stats = stats
+        self.hp = stats['vitality']
+        self.current_state = 'solid'
 
-attacks = [
-    {'name': 'att1', 'damage': 1, 'type': 'normal', 'smods': None},
-    {'name': 'att1', 'damage': 1, 'type': 'normal', 'smods': None},
-    {'name': 'att1', 'damage': 1, 'type': 'normal', 'smods': None},
-    {'name': 'att1', 'damage': 1, 'type': 'normal', 'smods': None}]
+attacks = {
+    'att1':    {'name': 'tackle', 'damage': 1, 'type': 'normal', 'smods': None},
+    'att2':    {'name': 'slash', 'damage': 2, 'type': 'normal', 'smods': None},
+    'att3':    {'name': 'take down', 'damage': 3, 'type': 'normal', 'smods': None},
+    'att4':    {'name': 'headbutt', 'damage': 4, 'type': 'normal', 'smods': None}}
 
-
-def get_attack(name):
-    for a in attacks:
-        if a['name'] == name:
-            return a
-
-#name, types, attack_names, vitality, speed, 
- #                phys_strength, spirit_strength, int_strength, phys_endur, 
-  #               spirit_endur, int_endur
-
-    
 # Create monsters, the master list of monsters
 monsters = []
 f = open('Data.txt')
 for line in f.readlines():
     l = line.split(';')
+    namearray = l[2].split(',')
+    attackarray = []
+    for a in namearray:
+        attackarray.append(attacks[a])
     monsters.append({'name': l[0],
                     'types': l[1].split(','),
-                    'attack_names': l[2].split(','),
+                    'attacks': attackarray,
                     'vitality': int(l[3]), 
                     'speed': int(l[4]),
                     'phys_strength': int(l[5]),
@@ -37,17 +29,14 @@ for line in f.readlines():
                     'int_strength': int(l[7]),
                     'phys_endur': int(l[8]),
                     'spirit_endur': int(l[9]),
-                    'int_endur': int(l[10]),
-                    'hp': int(l[3]),
-                    'current_state': 'solid'})
+                    'int_endur': int(l[10])})
 
 players = [
     {'name': 'p1', 'monsters':
-    [monsters[0], monsters[1], monsters[3], monsters[2]]},
+    [Monster(monsters[0]), Monster(monsters[1]), Monster(monsters[3]), Monster(monsters[2])]},
     {'name': 'p2', 'monsters':
-    [monsters[0], monsters[1], monsters[2], monsters[3]]}]
+    [Monster(monsters[0]), Monster(monsters[1]), Monster(monsters[3]), Monster(monsters[2])]}]
 
-# returns a player with the name from the database
 def get_player(name):
     for p in players:
         if p['name'] == name:
